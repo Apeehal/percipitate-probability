@@ -1,0 +1,99 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# Generate random length and array with random numbers between 0 and 1000
+length = np.random.randint(0, 11)
+random_array = np.random.randint(0, 101, size=(length, 3))
+
+radius_lengths = []
+
+def adjust_coordinates(array):
+    length = array.shape[0]
+    for i in range(0,length):
+        x1, y1, z1 = array[i, :3]
+        a = 0
+        for j in range(a+1, length):
+            x2, y2, z2 = array[a+1, :3]
+            r = np.sqrt((x1-x2)**2+(y1-y2)**2+(z1-z2)**2)
+            
+            a+=1
+            radius_lengths.append(r)
+            
+            
+
+adjusted_array = adjust_coordinates(random_array)
+
+
+
+r = 3 #set the radius of the percipitate
+
+
+
+for num in radius_lengths:
+    if num < 2*r and num != 0:
+        adjusted_array = adjust_coordinates(random_array)
+        
+
+        
+array_3d = np.zeros((100, 100, 100))
+
+
+# Iterate over each coordinate in the 3D array
+for l in random_array:
+    for i in range(array_3d.shape[0]):
+        for j in range(array_3d.shape[1]):
+            for k in range(array_3d.shape[2]):
+                # Calculate the distance from the current coordinate to the given point
+                distance = np.sqrt((i - l[0])**2 + (j - l[1])**2 + (k - l[2])**2)
+                # Check if the distance is within the radius
+                if distance <= r:
+                    # Set the value at the current coordinate to 1
+                    array_3d[i, j, k] = 1
+
+
+
+array_2d_totals = np.sum(array_3d, axis=2)
+
+x = np.sum(array_2d_totals, axis=0)
+
+L = np.count_nonzero(x)
+
+probability = L/100
+
+print(probability)
+
+# Find the indices where the array has value 1
+indices = np.nonzero(array_3d)
+
+
+
+# Create a heatmap plot
+plt.imshow(array_2d_totals, cmap='viridis', interpolation='nearest')
+
+# Add color bar
+plt.colorbar()
+
+# Show the plot
+plt.show()
+
+
+
+
+
+
+# Create a figure and a 3D axis
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot only the points where the array has value 1
+ax.scatter(indices[0], indices[1], indices[2], c='b')
+
+# Set labels
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+
+# Show the plot
+plt.show()
